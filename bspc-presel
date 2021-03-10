@@ -1,5 +1,18 @@
 #!/bin/bash
 
+usage() {
+    cat <<EOM
+usage: $(basename $0) [help] [direction amount]
+    help        Displays this message
+    direction   Should be "norht", "south", "west" or "east" and sets the direction of the preselection
+    amount      Should be a floating point number between 0.0 and 1.0. Controls the size of the steps the preselection will be adjusted with
+EOM
+    exit 0
+}
+
+[ "$1" = "help" ] && usage
+
+
 # Get preselection ratio. Will be null if the current node has no preselection.
 ratio=$(bspc query -T -n focused | jq -r ".presel.splitRatio")
 
@@ -44,7 +57,7 @@ else
             fi
         ;;
         *)
-            echo "Invalid option."
+            usage
         ;;
     esac
 

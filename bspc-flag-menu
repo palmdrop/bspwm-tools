@@ -1,4 +1,14 @@
 #!/bin/bash
+usage() {
+    cat <<EOM
+usage: $(basename $0) [help] 
+    help    Displays this message
+EOM
+    exit 0
+}
+
+[ "$1" = "help" ] && usage
+
 
 flags=( marked locked sticky private )
 

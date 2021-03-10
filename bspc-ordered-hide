@@ -1,4 +1,19 @@
 #!/bin/sh
+
+usage() {
+    cat <<EOM
+usage: $(basename $0) [help] {hide [pid]}|{unhide [desktop]}|{count [desktop]}
+  help    Displays this message
+  hide    Hides the focused window, or the window with the pid passed
+  unhide  Unhides a window on the focused desktop or on the desktop with the name passed
+  count   Counts the number of hidden windows on the focused desktop or on the desktop with the name passed
+EOM
+    exit 0
+}
+
+[ "$1" = "help" ] && usage
+
+
 DIR="/tmp/hidden"
 
 # Sends the user a message (terminal or notification)
@@ -20,10 +35,10 @@ hide() {
     [ ! -d $DIR ] && mkdir $DIR
 
     # Get window and desktop of window to hide
-    [ -z "$2" ] && {
+    [ -z "$1" ] && {
         node=$(bspc query -N -n)
     } || {
-        node=$2
+        node=$1
     }
 
     desktop=$(dsk $node)
@@ -86,7 +101,7 @@ count() {
     [ -z "$1" ] && {
         FILE="$DIR/$(dsk)"
     } || {
-        FILE="$DIR/$2"
+        FILE="$DIR/$1"
     }
 
     # Check if file exists for that directory    
@@ -111,7 +126,6 @@ case $1 in
         count $@
     ;;
     *)
-        msg "Unrecognized option"
-        exit 0
+        usage
     ;;
 esac

@@ -1,5 +1,17 @@
 #!/bin/sh
 
+usage() {
+    cat <<EOM
+usage: $(basename $0) [help] [--all]
+  help    Displays this message  
+  --all   Display windows on all desktops instead of just the focused one
+EOM
+    exit 0
+}
+
+[ "$1" = "help" ] && usage
+
+
 # If the "all" flag is passed, show all hidden nodes, nost just local ones.
 if [ "$1" = "--all" ]; then
     win_cmd=".hidden.window"
@@ -50,7 +62,7 @@ done <<< $(bspc query -N -n $win_cmd)
 }
 
 # Get user choice
-choice=$(printf "%s\n" "${!windows[@]}" | dmenu -i -F -p "Unhide")
+choice=$(printf "%s\n" "${!windows[@]}" | dmenu -i -p "Unhide")
 
 # If no choice, exit
 [ -z "$choice" ] && exit 1
