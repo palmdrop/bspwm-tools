@@ -37,21 +37,29 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About
-
 This project gathers a few useful scripts I've written for controlling different aspects of [bspwm](https://github.com/baskerville/bspwm). Some of these scripts are works in progress. This repository is continuously being updated as I improve my workflow. 
 
 Below are the scripts currently in the repository, along with a short description. A few usage examples can be found under <a href="#usage">usage</a>.
 
 ### Flag menu
+*bspc-flag-menu*
 
+I small menu (using dmenu) for toggling node flags. The menu prompts also displays the currently set flags for the focused window, which is useful.
 
 ### Ordered hide
+*bspc-ordered-hide*
 
+A script which keeps track of all the hidden nodes of all desktops, and unhides them in the reverse order they were hidden. A temporary directory is created at `tmp/hidden` to store the window pids. 
 
 ### Presel
+*bspc-presel*
 
+A smart presel script. Instead of having to use one keybind to set a presel direction and another to set the presel ratio, this script can be used to set both. For example, make a preselection using for example `bspc-presel west 0.1` and a preselection will be made. Run the same command again to decrease the size of the preselection with 0.1 units, or run `bspc-presel north 0.1` to increase the size. Once a preselection is made, it's orientation can not be changed until it's cancelled (at this point). 
 
 ### Unhide menu
+*bspc-unhide-menu*
+
+Sometimes you do not want to unhide the most recently hidden window. This script opens a menu (dmenu) where you can pick any hidden window on the current desktop, and unhide it. A flag can be paassed to enable unhiding a window on any desktop.
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -82,14 +90,11 @@ The scripts will be copied to `/usr/local/bin`. If we ever want to uninstall any
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-Most of the scripts are fairly simple to use, especially if you're already familiar with bspwm and bspc. Each script can be run with `script-name help` in order to display it's usage, or you can just read below:
-
-TODO continue writing usage functions
-
-
+Most of the scripts are fairly simple to use, especially if you're already familiar with bspwm and bspc. Each script can be run with `script-name help` in order to display it's usage.
 
 <!-- CONTRIBUTING -->
 ## Contributing
+Any suggestions on how to improve any of the scripts are welcomed. Make a fork and a pull request or just contact me using any of the channels below. 
 
 <!-- CONTACT -->
 ## Contact and social media
