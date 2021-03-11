@@ -7,5 +7,5 @@ DEST=/usr/local/bin/
 for file in bspc*
 do
     # Remove the corresponding symlink 
-    sudo rm "$DEST$file"
+    sudo rm -vi "$DEST$file"
 done
