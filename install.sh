@@ -7,5 +7,5 @@ DEST=/usr/local/bin/
 for file in bspc*
 do
     # Create a symlink to the file in this repository
-    sudo ln -s "$(realpath "$file")" $DEST
+    sudo ln -vs "$(realpath "$file")" $DEST
 done

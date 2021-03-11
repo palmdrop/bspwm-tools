@@ -81,9 +81,13 @@ Either simply copy the scripts you want to use into somewhere in your path, or u
    ```sh
    git clone https://github.com/palmdrop/bspwm-tools.git
    ```
-3. Run the install script
+3. Enter the repository
    ```sh
-   source bspwm-tools/install.sh
+   cd bspwm-tools
+   ```
+4. Run the install script
+   ```sh
+   source install.sh
    ```
 
 The scripts will be copied to `/usr/local/bin`. If we ever want to uninstall any of the scripts, remove them from this directory, or run the `uninstall.sh` script.
