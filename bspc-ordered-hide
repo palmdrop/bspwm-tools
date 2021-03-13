@@ -2,11 +2,11 @@
 
 usage() {
     cat <<EOM
-usage: $(basename $0) [help] {hide [pid]}|{unhide [desktop]}|{count [desktop]}
-  help    Displays this message
-  hide    Hides the focused window, or the window with the pid passed
-  unhide  Unhides a window on the focused desktop or on the desktop with the name passed
-  count   Counts the number of hidden windows on the focused desktop or on the desktop with the name passed
+usage: $(basename $0) [help] {hide [pid]}|{unhide [desktop] [--focus]}|{count [desktop]} [--focus]
+  help     Displays this message
+  hide     Hides the focused window, or the window with the pid passed
+  unhide   Unhides a window on the focused desktop or on the desktop with the name passed. If "--focus" is passed, the unhidden node will be focused
+  count    Counts the number of hidden windows on the focused desktop or on the desktop with the name passed
 EOM
     exit 0
 }
@@ -61,8 +61,17 @@ hide() {
 }
 
 unhide() {
-    # Get desktop
-    desktop=$(dsk $1)
+    focus=0
+    [ "$1" = "--focus" ] && {
+        focus=1
+        # Get desktop
+        desktop=$(bspc query -D -d --names)
+    } || {
+        [ "$2" = "--focus" ] && focus=1
+        # Get desktop
+        desktop=$(bspc query -D -d $1 --names)
+    }
+
 
     # Check if corresponding file exists 
     FILE="$DIR/$desktop"
@@ -88,7 +97,7 @@ unhide() {
     if bspc query -N -n "$node.hidden" > /dev/null; then
         # If yes, unhide window
         bspc node $node --flag hidden=off
-        bspc node -f $node
+        [ "$focus" -eq  "1" ] && bspc node -f $node
     else
         # If not, the window has been unhidden in some other way. 
         # Then try to unhide the next window
