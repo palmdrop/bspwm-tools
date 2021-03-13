@@ -20,6 +20,7 @@
         <li><a href="#ordered-hide">Ordered hide</a></li>
         <li><a href="#presel">Presel</a></li>
         <li><a href="#unhide-menu">Unhide menu</a></li>
+        <li><a href="#auto-unhide">Auto unhide</a></li>
       </ul>
     </li>
     <li>
@@ -61,6 +62,13 @@ A smart preselection script. Instead of having to use one keybinding to set a pr
 
 Sometimes you do not want to unhide the most recently hidden window. This script opens a menu (dmenu) where you can pick any hidden window on the current desktop, and unhide it. A flag can be passed to enable unhiding a window on any desktop.
 
+### Auto unhide
+*bspc-auto-unhide
+
+It's easy to forget hidden nodes on otherwise empty desktops. This script automatically unhides hidden nodes if the last visible node on the desktop is removed or transferred. 
+
+This script is dependent on `bspc-ordered-hide`.
+
 <!-- GETTING STARTED -->
 ## Getting Started
 So far, all tools in this repository are simple shell scripts. Install and use as you would any shell scripts.
@@ -95,6 +103,12 @@ The scripts will be copied to `/usr/local/bin`. If we ever want to uninstall any
 <!-- USAGE EXAMPLES -->
 ## Usage
 Most of the scripts are fairly simple to use, especially if you're already familiar with bspwm and bspc. Each script can be run with `script-name help` to display its usage. If you have any questions, feel free to contact me.
+
+`bspc-auto-unhide` listens for events continuously, and could be launched in your `bspwmrc` like this:
+
+    ```sh
+    bspc-auto-unhide &
+    ```
 
 <!-- CONTRIBUTING -->
 ## Contributing
