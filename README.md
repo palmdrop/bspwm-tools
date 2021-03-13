@@ -63,7 +63,7 @@ A smart preselection script. Instead of having to use one keybinding to set a pr
 Sometimes you do not want to unhide the most recently hidden window. This script opens a menu (dmenu) where you can pick any hidden window on the current desktop, and unhide it. A flag can be passed to enable unhiding a window on any desktop.
 
 ### Auto unhide
-*bspc-auto-unhide
+*bspc-auto-unhide*
 
 It's easy to forget hidden nodes on otherwise empty desktops. This script automatically unhides hidden nodes if the last visible node on the desktop is removed or transferred. 
 
@@ -106,9 +106,9 @@ Most of the scripts are fairly simple to use, especially if you're already famil
 
 `bspc-auto-unhide` listens for events continuously, and could be launched in your `bspwmrc` like this:
 
-    ```sh
-    bspc-auto-unhide &
-    ```
+```sh
+bspc-auto-unhide &
+```
 
 <!-- CONTRIBUTING -->
 ## Contributing
