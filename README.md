@@ -42,6 +42,8 @@ This project gathers a few useful scripts I've written for controlling different
 
 Below are the scripts currently in the repository, along with a short description. A few usage examples can be found under <a href="#usage">usage</a>.
 
+NOTE: None of these scripts are adapted for a multi-monitor setup. 
+
 ### Flag menu
 *bspc-flag-menu*
 
