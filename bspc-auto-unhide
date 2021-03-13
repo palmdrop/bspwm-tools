@@ -1,0 +1,27 @@
+#!/bin/sh
+
+bspc subscribe node_remove node_transfer | while read event info; do
+    desktop=""
+    case $event in
+        node_remove)
+            read mid did nid <<< "$info"
+            desktop="$did"
+        ;;
+        node_transfer)
+            read src_mid src_did src_nid dst_mid dst_did dst_nid <<< "$info"
+            desktop="$src_did"
+        ;;
+        *)
+            echo "Unknown event"
+        ;;
+    esac
+    desktop="$(bspc query -D -d $desktop --names)"
+
+    visible=$(bspc query -N -d $desktop -n .window.\!hidden | wc -l)
+    hidden=$(bspc-ordered-hide count $desktop)
+
+    [ "$visible" -eq "0" -a "$hidden" -gt "0" ] && {
+        bspc-ordered-hide unhide $desktop 
+    }
+done
+
