@@ -2,11 +2,12 @@
 
 usage() {
     cat <<EOM
-usage: $(basename $0) [help] {hide [pid]}|{unhide [desktop] [--focus]}|{count [desktop]} [--focus]
+usage: $(basename $0) [help] {hide [pid]}|{unhide [desktop] [--focus]}|{count [desktop]}|{peek [desktop]}
   help     Displays this message
   hide     Hides the focused window, or the window with the pid passed
   unhide   Unhides a window on the focused desktop or on the desktop with the name passed. If "--focus" is passed, the unhidden node will be focused
   count    Counts the number of hidden windows on the focused desktop or on the desktop with the name passed
+  peek     Returns window information about the most recently hidden window on the focused desktop or on the desktop with the name passed
 EOM
     exit 0
 }
@@ -27,6 +28,23 @@ dsk() {
         bspc query -D -d --names
     } || {
         bspc query -D -n $1 --names
+    }
+}
+
+node_info() {
+    # Get window information
+    info=$(xwininfo -id $1 | awk -F\" 'NR==2')
+
+    # Continue if no information is provided (no actual window)
+    [ -z "$info" ] && {
+        echo ""
+    } || {
+        # Parse everything between the double quotes. 
+        # This will be the name of the window
+        info=${info#*\"}
+        info=${info%\"*}
+
+        echo "$info"
     }
 }
 
@@ -58,23 +76,8 @@ hide() {
 
     # Hide file
     bspc node $node --flag hidden=on
-}
-
-node_info() {
-    # Get window information
-    info=$(xwininfo -id $1 | awk -F\" 'NR==2')
-
-    # Continue if no information is provided (no actual window)
-    [ -z "$info" ] && {
-        echo ""
-    } || {
-        # Parse everything between the double quotes. 
-        # This will be the name of the window
-        info=${info#*\"}
-        info=${info%\"*}
-
-        echo "$info"
-    }
+    info=$(node_info $node)
+    notify-send -u normal "Window hidden: \"$info\""
 }
 
 unhide() {
@@ -96,8 +99,9 @@ unhide() {
     # Check if corresponding file exists 
     FILE="$DIR/$desktop"
 
+    no_window_msg="No window hidden on desktop"
     [ ! -f $FILE ] && {
-        msg "No window hidden on desktop $desktop"
+        msg "$no_window_msg $desktop"
         exit 0
     }
 
@@ -106,7 +110,7 @@ unhide() {
     node=$(head -n 1 $FILE)
 
     [ -z $node ] && {
-        msg "No window hidden on desktop $desktop"
+        msg "$no_window_msg $desktop"
         exit 0
     }
 
@@ -149,6 +153,33 @@ count() {
     }
 }
 
+peek() {
+    # Get intended desktop
+    desktop=$(dsk $1)
+    
+    # Check if corresponding file exists 
+    FILE="$DIR/$desktop"
+
+    no_window_msg="[No window hidden]"
+    [ ! -f $FILE ] && {
+        echo "$no_window_msg"
+        exit 0
+    }
+
+    # Read first entry from file, i.e the most recently 
+    # hidden node.
+    node=$(head -n 1 $FILE)
+
+    [ -z $node ] && {
+        echo "$no_window_msg"
+        exit 0
+    }
+
+    # Get node info
+    info=$(node_info $node)
+    echo "$info"
+}
+
 case $1 in 
     hide)
         shift
@@ -161,6 +192,10 @@ case $1 in
     count)
         shift
         count $@
+    ;;
+    peek)
+        shift
+        peek $@
     ;;
     *)
         usage
