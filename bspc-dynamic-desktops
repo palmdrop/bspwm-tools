@@ -1,0 +1,123 @@
+#!/bin/sh
+
+# Inspired by Protesilaos Stavrou's script with similar functionality: https://gitlab.com/protesilaos/dotfiles/-/blob/v2.2.0/bin/bin/bspwm_dynamic_desktops
+
+# Desktop 10 will be ignored, since this is useful to stash rarely used background nodes
+desktop_ignore=( 10 )
+
+# The number of empty desktops that are allowed to exist
+# If there's no empty desktops, this many desktops will be created
+add_spare=1
+
+option=$1
+
+create_if_absent() {
+    # TODO add check if name is valid?
+    name="$1"
+
+    if ! bspc query -D -d $name > /dev/null 2>&1; then
+        bspc monitor -a $name
+    fi
+}
+
+remove_if_present() {
+    name="$1"
+
+    if bspc query -D -d $name > /dev/null 2>&1; then
+        bspc desktop $name -r
+    fi
+}
+
+get_desk_order() {
+    while read -r line; do
+        printf "%s\\n" "$line"
+    done < <(bspc query -D --names) | sort -g | /usr/bin/paste -d ' ' -s
+}
+
+sort_desktops() {
+    bspc monitor -o $(eval get_desk_order)
+}
+
+# Handle desktop stuff
+desktop() {
+    desktop="$2"
+
+    if ! [[ $desktop =~ ^[0-9]+$ ]] ; then
+        echo "\"$desktop\" is not a valid desktop name: you may only use numerical names." >&2
+        exit 1
+    fi
+
+    case $1 in 
+        -f)
+            create_if_absent $desktop
+            sort_desktops
+            bspc desktop -f $desktop
+        ;;
+        *)
+            echo "Invalid argument"
+        ;;
+    esac
+}
+
+
+# Handle node stuff
+node() {
+    # if user tries to send node to 4 but only 1 and 2 exist, node will end up on 3? or create 4 but do not create 3?
+
+    desktop="$2"
+    case $1 in
+        -d)
+            follow=$( [ "$3" = "--follow" ] && echo 1 || echo 0)
+            create_if_absent $desktop
+            sort_desktops
+            if [ $follow = "1" ]; then
+                bspc node -d $desktop --follow
+            else
+                bspc node -d $desktop 
+            fi
+        ;;
+        *)
+
+        ;;
+    esac
+
+    echo "temp"
+}
+
+
+shift
+case "$option" in
+    node)
+        node $@
+    ;;
+    desktop)
+        desktop $@
+    ;;
+    *)
+        echo "Invalid arg......:::"
+    ;;
+esac 
+
+# The empty (and unfocused) desktops
+empty=( $(bspc query -D -d '.!focused.!occupied' --names) )
+
+# TODO event listener that removes unused desktops?
+
+for d in ${empty[@]}; do
+    bspc desktop "$d" -r
+done
+
+
+desktops=( $(bspc query -D --names) )
+new=1
+
+for d in ${desktops[@]}; do
+    [ $d -eq $new ] && {
+        new=$(( $new + 1 ))
+    } || {
+        break
+    }
+done
+
+bspc monitor -a $new
+sort_desktops
