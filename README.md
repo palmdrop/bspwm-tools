@@ -54,6 +54,8 @@ I small menu (using dmenu) for toggling node flags. The menu prompt also display
 
 A script that keeps track of all the hidden nodes of all desktops, and unhides them in the reverse order they were hidden. A temporary directory is created at `tmp/hidden` to store the window pids. 
 
+If a window is unhidden but not focused, an informative notification will be sent using `notify-send`.
+
 ### Presel
 *bspc-presel*
 
@@ -82,6 +84,7 @@ There are some obvious dependencies, like [bspwm](https://github.com/baskerville
 * [jq]() (required by `bspc-presel`)
 * [bc]() (required by `bspc-presel`)
 * [xwininfo]() (required by `bspc-unhide-menu`)
+* [notify-send]() (required by `bspc-ordered-hide`)
 
 ### Installation
 Either simply copy the scripts you want to use into somewhere in your path, or use the `install.sh` script. Here are the steps required for the second option:

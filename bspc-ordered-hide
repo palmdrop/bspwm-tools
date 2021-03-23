@@ -60,8 +60,26 @@ hide() {
     bspc node $node --flag hidden=on
 }
 
+node_info() {
+    # Get window information
+    info=$(xwininfo -id $1 | awk -F\" 'NR==2')
+
+    # Continue if no information is provided (no actual window)
+    [ -z "$info" ] && {
+        echo ""
+    } || {
+        # Parse everything between the double quotes. 
+        # This will be the name of the window
+        info=${info#*\"}
+        info=${info%\"*}
+
+        echo "$info"
+    }
+}
+
 unhide() {
     focus=0
+    notify=0
     [ "$1" = "--focus" ] && {
         focus=1
         # Get desktop
@@ -70,8 +88,10 @@ unhide() {
         [ "$2" = "--focus" ] && focus=1
         # Get desktop
         desktop=$(bspc query -D -d $1 --names)
-    }
 
+        # Notification should be sent if the unhidden node is not immediately focused
+        notify=1
+    }
 
     # Check if corresponding file exists 
     FILE="$DIR/$desktop"
@@ -97,7 +117,15 @@ unhide() {
     if bspc query -N -n "$node.hidden" > /dev/null; then
         # If yes, unhide window
         bspc node $node --flag hidden=off
-        [ "$focus" -eq  "1" ] && bspc node -f $node
+
+        # Focus node
+        [ "$focus"  -eq "1" ] && bspc node -f $node
+
+        # Send notification
+        [ "$notify" -eq "1" ] && { 
+            info=$(node_info $node)
+            notify-send -u normal "Node unhidden on desktop $desktop:" "\"$info\""
+        }
     else
         # If not, the window has been unhidden in some other way. 
         # Then try to unhide the next window
